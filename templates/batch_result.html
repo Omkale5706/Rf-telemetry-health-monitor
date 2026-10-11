@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Batch results · RF Telemetry</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+<header class="topbar"><div class="brandmark">RF<span> / </span>ML</div><div class="brandcopy"><strong>RF Telemetry Health Monitor</strong><small>Batch prediction report</small></div><a class="back-link" href="{{ url_for('index') }}">← Dashboard</a></header>
+<main class="page">
+  <section class="hero compact"><div><p class="eyebrow">BATCH ANALYSIS COMPLETE</p><h1>Prediction <span>summary</span></h1><p class="subhead">Processed {{ total }} measurement rows. Preview shows the first 25 rows.</p></div></section>
+  <section class="metric-grid">
+    <article class="metric"><span>ROWS PROCESSED</span><strong>{{ total }}</strong><small>Input records</small></article>
+    <article class="metric"><span>FAULT TYPES FOUND</span><strong>{{ summary|length }}</strong><small>Distinct predictions</small></article>
+    <article class="metric"><span>NORMAL PREDICTIONS</span><strong>{{ summary.get('NORMAL', 0) }}</strong><small>Model class only</small></article>
+    <article class="metric"><span>FAULT-SUSPECTED</span><strong>{{ total - summary.get('NORMAL', 0) }}</strong><small>Verify with instruments</small></article>
+  </section>
+  <section class="panel">
+    <div class="section-head"><div><p class="eyebrow">CLASS DISTRIBUTION</p><h2>Predictions by fault class</h2></div></div>
+    <div class="class-summary">{% for label, count in summary.items() %}<div class="summary-chip"><span>{{ label.replace('_',' ') }}</span><strong>{{ count }}</strong></div>{% endfor %}</div>
+    <a class="button primary inline-button" href="{{ url_for('download_output', filename=output_file) }}">Download full predictions CSV ↓</a>
+  </section>
+  <section class="panel">
+    <div class="section-head"><div><p class="eyebrow">ROW PREVIEW</p><h2>First 25 predictions</h2></div></div>
+    <div class="table-wrap"><table><thead><tr>{% for col in columns %}<th>{{ col.replace('_',' ') }}</th>{% endfor %}</tr></thead><tbody>
+    {% for row in rows %}<tr>{% for col in columns %}<td>{{ row.get(col, '') if row.get(col) is not none else '' }}</td>{% endfor %}</tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  <div class="warning-banner"><div class="warning-mark">!</div><div><strong>Validate before operational use</strong><p>Model output is trained on synthetic data. Confirm faults using instrument measurements and independently labeled field data.</p></div></div>
+</main>
+</body></html>

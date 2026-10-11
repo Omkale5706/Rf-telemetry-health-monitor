@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prediction result · RF Telemetry</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+<header class="topbar"><div class="brandmark">RF<span> / </span>ML</div><div class="brandcopy"><strong>RF Telemetry Health Monitor</strong><small>Prediction report</small></div><a class="back-link" href="{{ url_for('index') }}">← Dashboard</a></header>
+<main class="page">
+  <section class="result-hero panel">
+    <p class="eyebrow">MODEL DIAGNOSTIC OUTPUT · {{ now }}</p>
+    <div class="result-status {{ 'healthy' if is_normal else 'faulty' }}">
+      <div class="status-symbol">{{ '✓' if is_normal else '!' }}</div>
+      <div><span>Predicted condition</span><h1>{{ result.get('Predicted_Fault_Type', 'Unknown').replace('_', ' ') }}</h1><p>{{ 'The model classified this measurement as NORMAL.' if is_normal else 'The model detected a pattern associated with a known fault class.' }}</p></div>
+    </div>
+    <div class="result-metrics">
+      <div><span>HEALTH STATUS</span><strong>{{ result.get('Predicted_Health_Status', 'Unknown') }}</strong></div>
+      <div><span>MODEL CONFIDENCE</span><strong>{{ '%.1f%%'|format((result.get('Model_Confidence') or 0)*100) }}</strong></div>
+      <div><span>DTF MEASURED DISTANCE</span><strong>{% if result.get('DTF_Measured_Peak_Distance_m') is not none %}{{ result.get('DTF_Measured_Peak_Distance_m') }} m{% else %}Not supplied{% endif %}</strong></div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="section-head"><div><p class="eyebrow">CLASS SCORES</p><h2>Predicted class probabilities</h2></div></div>
+    {% for p in probabilities %}
+    <div class="prob-row"><div><span>{{ p.label.replace('_', ' ') }}</span><b>{{ '%.1f%%'|format(p.value*100) }}</b></div><div class="bar-track"><div class="bar {{ 'best' if loop.first else '' }}" style="width: {{ (p.value*100)|round(2) }}%"></div></div></div>
+    {% endfor %}
+    <p class="muted note">These are model probability scores, not calibrated probabilities that a physical fault is present. A high score does not replace engineering verification.</p>
+  </section>
+  <section class="panel">
+    <div class="section-head"><div><p class="eyebrow">INPUT RECORD</p><h2>Submitted values</h2></div></div>
+    <div class="table-wrap"><table><tbody>{% for key, value in result.items() if not key.startswith('Probability_') %}<tr><th>{{ key.replace('_', ' ') }}</th><td>{{ value if value is not none else 'Not supplied' }}</td></tr>{% endfor %}</tbody></table></div>
+  </section>
+  <a class="button primary inline-button" href="{{ url_for('index') }}">← Return to dashboard</a>
+</main>
+</body></html>

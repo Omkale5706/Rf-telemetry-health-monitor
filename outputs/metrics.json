@@ -1,0 +1,316 @@
+{
+  "train_rows": 7000,
+  "validation_rows": 1500,
+  "test_rows": 1500,
+  "total_rows": 10000,
+  "class_count": 8,
+  "classes": [
+    "CABLE_FAULT",
+    "CONNECTOR_FAULT",
+    "EXCESSIVE_CABLE_LOSS",
+    "HIGH_VSWR",
+    "IMPEDANCE_MISMATCH",
+    "NORMAL",
+    "RF_INTERFERENCE",
+    "TELEMETRY_DAQ_FAULT"
+  ],
+  "validation": {
+    "accuracy": 0.9586666666666667,
+    "balanced_accuracy": 0.9601923013024987,
+    "report": {
+      "CABLE_FAULT": {
+        "precision": 0.9790209790209791,
+        "recall": 1.0,
+        "f1-score": 0.9893992932862191,
+        "support": 140.0
+      },
+      "CONNECTOR_FAULT": {
+        "precision": 0.9680365296803652,
+        "recall": 0.9636363636363636,
+        "f1-score": 0.9658314350797267,
+        "support": 220.0
+      },
+      "EXCESSIVE_CABLE_LOSS": {
+        "precision": 1.0,
+        "recall": 0.99375,
+        "f1-score": 0.9968652037617555,
+        "support": 160.0
+      },
+      "HIGH_VSWR": {
+        "precision": 0.9888888888888889,
+        "recall": 0.9888888888888889,
+        "f1-score": 0.9888888888888889,
+        "support": 180.0
+      },
+      "IMPEDANCE_MISMATCH": {
+        "precision": 0.9553072625698324,
+        "recall": 0.95,
+        "f1-score": 0.9526462395543176,
+        "support": 180.0
+      },
+      "NORMAL": {
+        "precision": 0.8687943262411347,
+        "recall": 0.98,
+        "f1-score": 0.9210526315789473,
+        "support": 250.0
+      },
+      "RF_INTERFERENCE": {
+        "precision": 0.9683544303797469,
+        "recall": 0.8052631578947368,
+        "f1-score": 0.8793103448275862,
+        "support": 190.0
+      },
+      "TELEMETRY_DAQ_FAULT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 180.0
+      },
+      "accuracy": 0.9586666666666667,
+      "macro avg": {
+        "precision": 0.9660503020976184,
+        "recall": 0.9601923013024987,
+        "f1-score": 0.9617492546221802,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.9607814694584152,
+        "recall": 0.9586666666666667,
+        "f1-score": 0.9582037972741646,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        140,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        212,
+        0,
+        0,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        159,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        178,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        2,
+        171,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        245,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        37,
+        153,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        180
+      ]
+    ]
+  },
+  "test": {
+    "accuracy": 0.958,
+    "balanced_accuracy": 0.9462760416666667,
+    "report": {
+      "CABLE_FAULT": {
+        "precision": 0.9923664122137404,
+        "recall": 1.0,
+        "f1-score": 0.9961685823754789,
+        "support": 260.0
+      },
+      "CONNECTOR_FAULT": {
+        "precision": 0.9863945578231292,
+        "recall": 0.9666666666666667,
+        "f1-score": 0.9764309764309764,
+        "support": 150.0
+      },
+      "EXCESSIVE_CABLE_LOSS": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 120.0
+      },
+      "HIGH_VSWR": {
+        "precision": 0.9948453608247423,
+        "recall": 0.965,
+        "f1-score": 0.9796954314720813,
+        "support": 200.0
+      },
+      "IMPEDANCE_MISMATCH": {
+        "precision": 0.9401197604790419,
+        "recall": 0.98125,
+        "f1-score": 0.9602446483180428,
+        "support": 160.0
+      },
+      "NORMAL": {
+        "precision": 0.8930635838150289,
+        "recall": 0.965625,
+        "f1-score": 0.9279279279279279,
+        "support": 320.0
+      },
+      "RF_INTERFERENCE": {
+        "precision": 0.8829787234042553,
+        "recall": 0.6916666666666667,
+        "f1-score": 0.7757009345794392,
+        "support": 120.0
+      },
+      "TELEMETRY_DAQ_FAULT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 170.0
+      },
+      "accuracy": 0.958,
+      "macro avg": {
+        "precision": 0.9612210498199922,
+        "recall": 0.9462760416666667,
+        "f1-score": 0.9520210626379934,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.9580669855466379,
+        "recall": 0.958,
+        "f1-score": 0.9567118379960292,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        260,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        145,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        120,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        193,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        157,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        309,
+        11,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        37,
+        83,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        170
+      ]
+    ]
+  },
+  "note": "Scores are on synthetic data; real-world accuracy is not established."
+}

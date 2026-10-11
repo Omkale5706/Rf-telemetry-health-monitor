@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RF Telemetry Health Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brandmark">RF<span> / </span>ML</div>
+  <div class="brandcopy">
+    <strong>RF Telemetry Health Monitor</strong>
+    <small>ML-Based Health Monitoring and Fault Diagnosis of RF Telemetry System</small>
+  </div>
+  <div class="live-pill"><i></i> MODEL READY</div>
+</header>
+<main class="page">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">ENGINEERING DIAGNOSTICS · LOCAL DASHBOARD</p>
+      <h1>Telemetry system<br><span>health intelligence</span></h1>
+      <p class="subhead">Analyze RF and telemetry measurements, screen for known fault patterns, and export batch predictions.</p>
+    </div>
+    <div class="hero-icon">
+      <svg viewBox="0 0 180 150" role="img" aria-label="Telemetry signal illustration">
+        <circle cx="90" cy="75" r="56" fill="none" stroke="currentColor" stroke-opacity=".18" stroke-width="1.5"/>
+        <circle cx="90" cy="75" r="38" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5"/>
+        <circle cx="90" cy="75" r="19" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.5"/>
+        <path d="M20 76h28l12-23 17 47 17-39 12 15h54" fill="none" stroke="#63e6be" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="90" cy="75" r="4" fill="#63e6be"/>
+      </svg>
+    </div>
+  </section>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+
+  <section class="metric-grid">
+    <article class="metric"><span>TRAINING RECORDS</span><strong>{{ metrics.get('train_rows', '—') }}</strong><small>Session-aware split</small></article>
+    <article class="metric"><span>FAULT CLASSES</span><strong>{{ metrics.get('class_count', classes|length) }}</strong><small>Known labeled categories</small></article>
+    <article class="metric"><span>TEST ACCURACY</span><strong>{{ '%.2f%%'|format(metrics.get('test', {}).get('accuracy', 0)*100) if metrics else '—' }}</strong><small>Synthetic holdout only</small></article>
+    <article class="metric"><span>MODEL</span><strong class="model-name">{{ model_name }}</strong><small>Supervised classification</small></article>
+  </section>
+
+  <section class="architecture panel">
+    <div class="section-head"><div><p class="eyebrow">SYSTEM PIPELINE</p><h2>End-to-end architecture</h2></div><span class="tag">TRAIN → PREDICT → REVIEW</span></div>
+    <div class="flow">
+      <div class="flow-node"><b>01</b><strong>Measurement input</strong><small>VSWR · Return loss · DTF · Insertion loss · Telemetry</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><b>02</b><strong>Preprocessing</strong><small>Missing values · Encoding · Feature alignment</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><b>03</b><strong>Random Forest</strong><small>Multiclass fault prediction</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node"><b>04</b><strong>Health report</strong><small>Status · Fault probabilities · CSV export</small></div>
+    </div>
+    <p class="muted note">Spectrum-analyzer fields are excluded because that option is not available on the project's R&amp;S ZVH unit. DTF distance is shown as a measured value, not an ML-estimated location.</p>
+  </section>
+
+  <div class="two-col">
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">SINGLE MEASUREMENT</p><h2>Run a live prediction</h2></div><span class="icon-chip">01</span></div>
+      <p class="muted">Enter the available measurements. Leave unknown values blank; model preprocessing will handle missing fields, though missing critical measurements can reduce reliability.</p>
+      <form action="{{ url_for('predict_manual') }}" method="post" class="measurement-form">
+        {% for feature in features %}
+          <label class="field">
+            <span>{{ feature.replace('_', ' ') }}</span>
+            {% if feature in ['Operating_Condition', 'Communication_Status', 'Data_Logger_Status'] %}
+              <input name="{{ feature }}" value="{{ defaults.get(feature, '') }}" placeholder="Optional">
+            {% elif feature == 'Telemetry_Missing_Flag' %}
+              <select name="{{ feature }}"><option value="0">0 — No missing telemetry</option><option value="1">1 — Missing telemetry flagged</option></select>
+            {% else %}
+              <input name="{{ feature }}" value="{{ defaults.get(feature, '') }}" placeholder="Enter value" inputmode="decimal">
+            {% endif %}
+          </label>
+        {% endfor %}
+        <button type="submit" class="button primary full">Analyze measurement <span>↗</span></button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">BATCH PROCESSING</p><h2>Upload measurement file</h2></div><span class="icon-chip">02</span></div>
+      <p class="muted">Upload an Excel or CSV file with one measurement per row. A Fault_Type column is not required for prediction.</p>
+      <form action="{{ url_for('predict_upload') }}" method="post" enctype="multipart/form-data" class="upload-box">
+        <div class="upload-symbol">⇧</div>
+        <strong>Drop a file into the workflow</strong>
+        <small>Excel .xlsx / .xls or CSV · Maximum 20 MB</small>
+        <input type="file" name="file" accept=".xlsx,.xls,.csv" required>
+        <button type="submit" class="button primary full">Predict all rows</button>
+      </form>
+      <div class="info-card">
+        <strong>Expected measurement columns</strong>
+        <p>Frequency_MHz, VSWR, Return_Loss_dB, DTF_Peak_Distance_m, DTF_Peak_Magnitude_dB, Insertion_Loss_dB (or Cable_Loss_dB), Signal_Power_dBm, Telemetry_Value_V, Temperature_C and status fields.</p>
+      </div>
+      <div class="info-card subtle">
+        <strong>Fault classes learned</strong>
+        <div class="class-pills">{% for cls in classes %}<span>{{ cls }}</span>{% endfor %}</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="section-head"><div><p class="eyebrow">MODEL INTERPRETATION</p><h2>Most influential features</h2></div><span class="tag">GLOBAL IMPORTANCE</span></div>
+    {% if feature_importance %}
+      <div class="importance-list">
+      {% for item in feature_importance[:10] %}
+        <div class="importance-row">
+          <span>{{ item.name }}</span>
+          <div class="bar-track"><div class="bar" style="width: {{ (item.importance * 100)|round(2) }}%"></div></div>
+          <b>{{ '%.3f'|format(item.importance) }}</b>
+        </div>
+      {% endfor %}
+      </div>
+    {% else %}<p class="muted">Feature importance will appear after model training.</p>{% endif %}
+    <p class="muted note">Feature importance describes the trained model's overall behavior. It does not prove physical causation or guarantee that a feature is a reliable diagnostic indicator on real hardware.</p>
+  </section>
+
+  <section class="warning-banner">
+    <div class="warning-mark">!</div>
+    <div><strong>Research / deployment limitation</strong><p>This starter model was trained on a synthetic, physics-inspired dataset. Its displayed accuracy is not verified field accuracy. Validate using independently collected, labeled RF telemetry measurements before using predictions for operational decisions.</p></div>
+  </section>
+  <footer>RF Telemetry ML Dashboard <span>·</span> Flask local application <span>·</span> Decision support, not instrument calibration</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Synthetic dataset evaluation
+Rows: 10000
+Train/validation/test: 7000/1500/1500
+Classes: 8
+Validation accuracy: 0.9587
+Validation balanced accuracy: 0.9602
+Held-out test accuracy: 0.9580
+Held-out test balanced accuracy: 0.9463
+
+IMPORTANT: Synthetic dataset only. This is not validated real-world telemetry performance.
